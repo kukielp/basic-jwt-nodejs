@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .header {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 5px;
+        }
+        
+        .nav {
+            line-height: 30px;
+            background-color: #eeeeee;
+            height: 300px;
+            width: 250px;
+            float: left;
+            padding: 5px;
+        }
+        
+        .section {
+            width: 350px;
+            float: left;
+            padding: 10px;
+        }
+        
+        #output-error{
+            color: red;
+        }
+        
+        span{
+            min-width: 80px;
+            float: left;
+        }
+        
+    </style>
+    <script>
+        var token = '';
+        
+        clear = function(){
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('output-error').innerHTML = '';
+        }
+        
+        noAuth = function(){
+            clear();
+            var r = new XMLHttpRequest();
+            r.open("GET", "/api/noauth", true);
+            r.onreadystatechange = function () {
+                if (r.readyState != 4 || r.status != 200) return;
+                document.getElementById('output').innerHTML = JSON.parse(r.responseText).message;
+            };
+            r.send();
+        }
+        
+         authenticateMe = function(){
+            clear();
+            var r = new XMLHttpRequest();
+            var user = document.getElementById('username').value;
+            var pass = document.getElementById('password').value;
+            var data = "name="+user+"&password="+pass;
+            
+            r.open("POST", "/api/auth", true);
+            r.onreadystatechange = function () {
+                if (r.readyState != 4 || r.status != 200) return;
+                document.getElementById('output').innerHTML = JSON.parse(r.responseText).message;
+                token = JSON.parse(r.responseText).token;
+            };
+            r.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            r.send(encodeURI(data));
+        }
+        
+        getAllUsers = function(){
+           clear();
+           var r = new XMLHttpRequest();
+            r.open("GET", "/api/users", true);
+            r.onload = function () {
+                if (r.readyState != 4 || r.status != 200){
+                    document.getElementById('output-error').innerHTML = JSON.parse(r.responseText).message;
+                }else{
+                   document.getElementById('output').innerHTML = JSON.stringify(JSON.parse(r.responseText).message); 
+                }
+            };
+            r.setRequestHeader('x-access-token', token);
+            r.send(); 
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>API Caller</h1>
+    </div>
+
+    <div class="nav">
+        <button onClick="noAuth()">Test No Auth</button>
+        <button onClick="authenticateMe()">Login</button>
+        <button onClick="getAllUsers()">Get Users</button>
+        <button onClick="window.location = '/'">Reload App</button>
+        <h4>Inputs</h4>
+        <span>Username:</span> <input id="username" placeholder="username" value="Saul Goodman">
+        <span>Password:</span> <input id="password" placeholder="password" value="money">
+    </div>
+
+    <div class="section">
+        <h2>Output</h2>
+        <p id="output"></p>
+    </div>
+     <div class="section">
+        <h2>Error Output</h2>
+        <p id="output-error"></p>
+    </div>
+    
+</body>
+
+</html>
