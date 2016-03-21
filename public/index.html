@@ -39,6 +39,7 @@
         clear = function(){
             document.getElementById('output').innerHTML = '';
             document.getElementById('output-error').innerHTML = '';
+            document.getElementById('result').innerHTML = '';
         }
         
         noAuth = function(){
@@ -63,6 +64,7 @@
             r.onreadystatechange = function () {
                 if (r.readyState != 4 || r.status != 200) return;
                 document.getElementById('output').innerHTML = JSON.parse(r.responseText).message;
+                document.getElementById('result').innerHTML = JSON.parse(r.responseText).token;
                 token = JSON.parse(r.responseText).token;
             };
             r.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -77,7 +79,8 @@
                 if (r.readyState != 4 || r.status != 200){
                     document.getElementById('output-error').innerHTML = JSON.parse(r.responseText).message;
                 }else{
-                   document.getElementById('output').innerHTML = JSON.stringify(JSON.parse(r.responseText).message); 
+                   document.getElementById('output').innerHTML = JSON.stringify(JSON.parse(r.responseText).message);
+                   document.getElementById('result').innerHTML = JSON.stringify(JSON.parse(r.responseText).users); 
                 }
             };
             r.setRequestHeader('x-access-token', token);
@@ -108,8 +111,10 @@
     </div>
 
     <div class="section">
-        <h2>Output</h2>
+        <h2>Messages</h2>
         <p id="output"></p>
+        <h2>Result</h2>
+        <p id="result"></p>
     </div>
      <div class="section">
         <h2>Error Output</h2>

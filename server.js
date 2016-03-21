@@ -107,7 +107,7 @@ apiRoutes.use(function(req, res, next) {
 // route to return all users (GET http://localhost:8080/api/users)
 apiRoutes.get('/users', function(req, res) {
     console.log("Request after middle ware:" + JSON.stringify(req.decoded));
-    res.json({ success: false, message: users});
+    res.json({ success: true, message: 'Here are the users', users: users});
 });   
 
 // apply the routes to our application with the prefix /api
